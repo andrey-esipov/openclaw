@@ -50,7 +50,7 @@ describe("createChildAdapter", () => {
       options?: { detached?: boolean };
       fallbacks?: Array<{ options?: { detached?: boolean } }>;
     };
-    expect(spawnArgs.options?.detached).toBe(true);
+    expect(spawnArgs.options?.detached).toBe(process.platform !== "win32");
     expect(spawnArgs.fallbacks?.[0]?.options?.detached).toBe(false);
 
     adapter.kill();
