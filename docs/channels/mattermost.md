@@ -70,6 +70,7 @@ Mattermost responds to DMs automatically. Channel behavior is controlled by `cha
 
 - `oncall` (default): respond only when @mentioned in channels.
 - `onmessage`: respond to every channel message.
+- `always`: respond to every message unconditionally (no mention or prefix required).
 - `onchar`: respond when a message starts with a trigger prefix.
 
 Config example:
@@ -89,6 +90,21 @@ Notes:
 
 - `onchar` still responds to explicit @mentions.
 - `channels.mattermost.requireMention` is honored for legacy configs but `chatmode` is preferred.
+- **Known issue:** `onmessage` and `always` chatmodes do not suppress @mention gating on their own. You must also set `requireMention: false` via `groups` config for the bot to respond without being mentioned (see [#11797](https://github.com/openclaw/openclaw/issues/11797)):
+
+  ```json5
+  {
+    channels: {
+      mattermost: {
+        chatmode: "onmessage", // or "always"
+        groupPolicy: "open",
+        groups: {
+          "*": { requireMention: false },
+        },
+      },
+    },
+  }
+  ```
 
 ## Access control (DMs)
 
@@ -133,6 +149,6 @@ Mattermost supports multiple accounts under `channels.mattermost.accounts`:
 
 ## Troubleshooting
 
-- No replies in channels: ensure the bot is in the channel and mention it (oncall), use a trigger prefix (onchar), or set `chatmode: "onmessage"`.
+- No replies in channels: ensure the bot is in the channel and mention it (`oncall`), use a trigger prefix (`onchar`), or set `chatmode: "onmessage"` / `chatmode: "always"`. If using `onmessage` or `always` and the bot still only replies to @mentions, add `groups: { "*": { requireMention: false } }` to the Mattermost config (see [#11797](https://github.com/openclaw/openclaw/issues/11797)).
 - Auth errors: check the bot token, base URL, and whether the account is enabled.
 - Multi-account issues: env vars only apply to the `default` account.

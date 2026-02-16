@@ -76,6 +76,7 @@ Mattermost 自动响应私信。频道行为由 `chatmode` 控制：
 
 - `oncall`（默认）：仅在频道中被 @提及时响应。
 - `onmessage`：响应每条频道消息。
+- `always`：无条件响应每条消息（无需提及或前缀）。
 - `onchar`：当消息以触发前缀开头时响应。
 
 配置示例：
@@ -95,6 +96,21 @@ Mattermost 自动响应私信。频道行为由 `chatmode` 控制：
 
 - `onchar` 仍会响应显式 @提及。
 - `channels.mattermost.requireMention` 对旧配置仍然有效，但推荐使用 `chatmode`。
+- **已知问题：** `onmessage` 和 `always` 聊天模式本身不会禁用 @提及限制。你必须同时通过 `groups` 配置设置 `requireMention: false`，机器人才能在不被提及的情况下响应消息（参见 [#11797](https://github.com/openclaw/openclaw/issues/11797)）：
+
+  ```json5
+  {
+    channels: {
+      mattermost: {
+        chatmode: "onmessage", // 或 "always"
+        groupPolicy: "open",
+        groups: {
+          "*": { requireMention: false },
+        },
+      },
+    },
+  }
+  ```
 
 ## 访问控制（私信）
 
@@ -139,6 +155,6 @@ Mattermost 支持在 `channels.mattermost.accounts` 下配置多个账户：
 
 ## 故障排除
 
-- 频道中无回复：确保 bot 在频道中并提及它（oncall），使用触发前缀（onchar），或设置 `chatmode: "onmessage"`。
+- 频道中无回复：确保 bot 在频道中并提及它（`oncall`），使用触发前缀（`onchar`），或设置 `chatmode: "onmessage"` / `chatmode: "always"`。如果使用 `onmessage` 或 `always` 但机器人仍仅响应 @提及，请在 Mattermost 配置中添加 `groups: { "*": { requireMention: false } }`（参见 [#11797](https://github.com/openclaw/openclaw/issues/11797)）。
 - 认证错误：检查 bot token、基础 URL 以及账户是否已启用。
 - 多账户问题：环境变量仅适用于 `default` 账户。

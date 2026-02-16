@@ -10,6 +10,8 @@ Docs: https://docs.openclaw.ai
 
 ### Fixes
 
+- Exec/Windows: disable `detached` mode on Windows in `createChildAdapter()` so stdout/stderr are captured correctly, restoring exec tool output on native Windows. (#18085)
+
 - Security/Sessions: create new session transcript JSONL files with user-only (`0o600`) permissions and extend `openclaw security audit --fix` to remediate existing transcript file permissions.
 - Infra/Fetch: ensure foreign abort-signal listener cleanup never masks original fetch successes/failures, while still preventing detached-finally unhandled rejection noise in `wrapFetchWithAbortSignal`. Thanks @Jackten.
 - Gateway/Config: prevent `config.patch` object-array merges from falling back to full-array replacement when some patch entries lack `id`, so partial `agents.list` updates no longer drop unrelated agents. (#17989) Thanks @stakeswky.
@@ -22,6 +24,10 @@ Docs: https://docs.openclaw.ai
 - Auto-reply/TTS: keep tool-result media delivery enabled in group chats and native command sessions (while still suppressing tool summary text) so `NO_REPLY` follow-ups do not drop successful TTS audio. (#17991) Thanks @zerone0x.
 - Cron: preserve per-job schedule-error isolation in post-run maintenance recompute so malformed sibling jobs no longer abort persistence of successful runs. (#17852) Thanks @pierreeurope.
 - CLI/Pairing: make `openclaw qr --remote` prefer `gateway.remote.url` over tailscale/public URL resolution and register the `openclaw clawbot qr` legacy alias path. (#18091)
+
+### Docs
+
+- Mattermost: add missing `always` chatmode, document `requireMention` groups workaround for `onmessage`/`always`, and update troubleshooting entry. (#18111)
 
 ## 2026.2.15
 
